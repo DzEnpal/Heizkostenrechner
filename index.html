@@ -1,191 +1,554 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heizkostenvergleich – Jetzt umsteigen oder warten?</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
+      color: #1f2937;
+    }
 
-<title>Heizkosten Vergleich</title>
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      color: white;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 22px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+    }
 
-<style>
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
 
-body{
-font-family:Arial;
-background:#f3f4f6;
-padding:30px;
-}
+    .hero p {
+      margin: 0;
+      opacity: 0.95;
+      font-size: 16px;
+    }
 
-.container{
-max-width:1000px;
-margin:auto;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 22px;
+    }
 
-.card{
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
-margin-bottom:20px;
-}
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    }
 
-h1{
-text-align:center;
-}
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 22px;
+    }
 
-input{
-width:100%;
-padding:10px;
-margin:10px 0;
-font-size:16px;
-}
+    .field {
+      margin-bottom: 14px;
+    }
 
-button{
-background:#16a34a;
-color:white;
-border:none;
-padding:12px 20px;
-font-size:16px;
-border-radius:6px;
-cursor:pointer;
-}
+    .field label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
 
-.result{
-font-size:24px;
-font-weight:bold;
-margin-top:20px;
-text-align:center;
-}
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+    }
 
-</style>
+    .help {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #6b7280;
+    }
 
+    .btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #16a34a;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .summary-box {
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+    }
+
+    .summary-box h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .big {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .line {
+      font-size: 14px;
+      margin: 6px 0;
+    }
+
+    .highlight {
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 16px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+    }
+
+    .highlight .title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .highlight .value {
+      font-size: 34px;
+      font-weight: 900;
+      color: #166534;
+    }
+
+    .table-wrap {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: white;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: center;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    canvas {
+      margin-top: 18px;
+      background: white;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <div class="hero">
+      <h1>Jetzt umsteigen oder warten?</h1>
+      <p>Vergleich der Kosten: alte Heizung weiter nutzen oder jetzt auf Wärmepumpe wechseln.</p>
+    </div>
 
-<div class="container">
+    <div class="grid">
+      <div class="card">
+        <h2>Eingaben</h2>
 
-<h1>Heizkosten Vergleich</h1>
+        <div class="field">
+          <label for="heizart">Aktuelle Heizart</label>
+          <select id="heizart">
+            <option value="Gas">Gas</option>
+            <option value="Öl">Öl</option>
+          </select>
+        </div>
 
-<div class="card">
+        <div class="field">
+          <label for="verbrauch">Aktueller Jahresverbrauch (kWh/Jahr)</label>
+          <input id="verbrauch" type="number" value="20000">
+          <div class="help">Beispiel: 20.000 kWh pro Jahr</div>
+        </div>
 
-<h2>Eingaben</h2>
+        <div class="field">
+          <label for="preisJetzt">Aktueller Preis (Cent pro kWh)</label>
+          <input id="preisJetzt" type="number" step="0.1" value="11.5">
+          <div class="help">Das zahlt der Kunde aktuell</div>
+        </div>
 
-Wohnfläche (m²)
-<input id="flaeche" type="number" value="140">
+        <div class="field">
+          <label for="preisAb2027">Preis ab 2027 (Cent pro kWh)</label>
+          <input id="preisAb2027" type="number" step="0.1" value="14.5">
+          <div class="help">Hier trägst du den höheren künftigen Preis ein</div>
+        </div>
 
-Gaspreis (Cent / kWh)
-<input id="gaspreis" type="number" value="12">
+        <div class="field">
+          <label for="strompreis">Wärmepumpen-Strompreis (Cent pro kWh)</label>
+          <input id="strompreis" type="number" step="0.1" value="28">
+        </div>
 
-Strompreis Wärmepumpe (Cent / kWh)
-<input id="strompreis" type="number" value="30">
+        <div class="field">
+          <label for="jaz">JAZ Wärmepumpe</label>
+          <input id="jaz" type="number" step="0.1" value="3.5">
+        </div>
 
-Jahre bis Heizung kaputt
-<input id="jahre" type="number" value="5">
+        <div class="field">
+          <label for="jahre">Jahre bis die alte Heizung ersetzt werden muss</label>
+          <input id="jahre" type="number" value="5">
+        </div>
 
-Preis Wärmepumpe (€)
-<input id="waermepumpepreis" type="number" value="18000">
+        <div class="field">
+          <label for="wpPreis">Kosten Wärmepumpe (€)</label>
+          <input id="wpPreis" type="number" value="18000">
+        </div>
 
-<br><br>
+        <div class="btns">
+          <button class="primary" onclick="berechnen()">Jetzt berechnen</button>
+          <button class="secondary" onclick="resetForm()">Zurücksetzen</button>
+        </div>
 
-<button onclick="rechnen()">Berechnen</button>
+        <div class="note">
+          Ziel: Der Kunde sieht klar, was er aktuell zahlt, was später auf ihn zukommt und was ihn Warten insgesamt kostet.
+        </div>
+      </div>
 
-</div>
+      <div class="card">
+        <h2>Ergebnis</h2>
 
-<div class="card">
+        <div class="summary-grid">
+          <div class="summary-box">
+            <h3>Aktuelle Heizkosten pro Jahr</h3>
+            <div class="big" id="aktuellJahr">0 €</div>
+            <div class="line">Heizart: <strong id="heizartText">-</strong></div>
+            <div class="line">Verbrauch: <strong id="verbrauchText">0 kWh</strong></div>
+            <div class="line">Aktueller Preis: <strong id="preisJetztText">0 ct/kWh</strong></div>
+          </div>
 
-<canvas id="chart"></canvas>
+          <div class="summary-box">
+            <h3>Kosten ab 2027 pro Jahr</h3>
+            <div class="big" id="ab2027Jahr">0 €</div>
+            <div class="line">Neuer Preis: <strong id="preis2027Text">0 ct/kWh</strong></div>
+            <div class="line">Mehrkosten p.a.: <strong id="mehrkostenText">0 €</strong></div>
+            <div class="line">Monatlich: <strong id="monat2027Text">0 €</strong></div>
+          </div>
 
-<div class="result" id="ergebnis"></div>
+          <div class="summary-box">
+            <h3>Wenn Sie warten</h3>
+            <div class="big" id="wartenGesamt">0 €</div>
+            <div class="line">Weiter heizen bis Ersatz: <strong id="weiterheizenText">0 €</strong></div>
+            <div class="line">Danach Wärmepumpe: <strong id="wpDanachText">0 €</strong></div>
+            <div class="line">Sie zahlen erst weiter – und investieren später trotzdem.</div>
+          </div>
 
-</div>
+          <div class="summary-box">
+            <h3>Wenn Sie jetzt umsteigen</h3>
+            <div class="big" id="jetztGesamt">0 €</div>
+            <div class="line">Wärmepumpe sofort: <strong id="wpSofortText">0 €</strong></div>
+            <div class="line">Stromkosten bis dahin: <strong id="stromGesamtText">0 €</strong></div>
+            <div class="line">Planbar statt weiter steigende Heizkosten.</div>
+          </div>
+        </div>
 
-</div>
+        <div class="highlight">
+          <div class="title">Ihre mögliche Ersparnis beim sofortigen Umstieg</div>
+          <div class="value" id="ersparnisText">0 €</div>
+        </div>
 
-<script>
+        <canvas id="vergleichChart" height="120"></canvas>
 
-let chart;
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Jahr</th>
+                <th>Weiter mit alter Heizung</th>
+                <th>Kumuliert warten</th>
+                <th>Wärmepumpe jetzt</th>
+                <th>Kumuliert jetzt umsteigen</th>
+              </tr>
+            </thead>
+            <tbody id="tabelleBody"></tbody>
+          </table>
+        </div>
 
-function rechnen(){
+        <div class="note">
+          Die Tabelle zeigt dem Kunden verständlich: Was zahlt er Jahr für Jahr beim Warten – und was wäre beim direkten Umstieg die Alternative?
+        </div>
+      </div>
+    </div>
+  </div>
 
-let flaeche = Number(document.getElementById("flaeche").value)
-let gaspreis = Number(document.getElementById("gaspreis").value)
-let strompreis = Number(document.getElementById("strompreis").value)
-let jahre = Number(document.getElementById("jahre").value)
-let wpPreis = Number(document.getElementById("waermepumpepreis").value)
+  <script>
+    let chartInstance;
 
-let verbrauch = flaeche * 140
+    function euro(value) {
+      return new Intl.NumberFormat('de-DE', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
 
-let gasKosten = []
-let wpKosten = []
+    function numberDE(value) {
+      return new Intl.NumberFormat('de-DE', {
+        maximumFractionDigits: 0
+      }).format(value);
+    }
 
-let gasSumme = 0
-let wpSumme = 0
+    function berechnen() {
+      const heizart = document.getElementById('heizart').value;
+      const verbrauch = Number(document.getElementById('verbrauch').value);
+      const preisJetzt = Number(document.getElementById('preisJetzt').value);
+      const preisAb2027 = Number(document.getElementById('preisAb2027').value);
+      const strompreis = Number(document.getElementById('strompreis').value);
+      const jaz = Number(document.getElementById('jaz').value);
+      const jahre = Number(document.getElementById('jahre').value);
+      const wpPreis = Number(document.getElementById('wpPreis').value);
 
-for(let i=1;i<=jahre;i++){
+      if (!verbrauch || !preisJetzt || !preisAb2027 || !strompreis || !jaz || !jahre || !wpPreis) {
+        alert('Bitte alle Felder ausfüllen.');
+        return;
+      }
 
-let gasJahr = (verbrauch * gaspreis /100) * (1 + i*0.05)
+      const aktuellProJahr = verbrauch * (preisJetzt / 100);
+      const ab2027ProJahr = verbrauch * (preisAb2027 / 100);
+      const mehrkostenProJahr = ab2027ProJahr - aktuellProJahr;
 
-gasSumme += gasJahr
-gasKosten.push(Math.round(gasSumme))
+      const wpStromverbrauchProJahr = verbrauch / jaz;
+      const wpKostenProJahr = wpStromverbrauchProJahr * (strompreis / 100);
 
-let wpJahr = (verbrauch/3.5 * strompreis)/100
+      const labels = [];
+      const wartenKumuliert = [];
+      const jetztKumuliert = [];
+      const wartenJaehrlich = [];
+      const jetztJaehrlich = [];
 
-wpSumme += wpJahr
-wpKosten.push(Math.round(wpSumme))
+      let wartenSumme = 0;
+      let jetztSumme = wpPreis;
 
-}
+      for (let i = 1; i <= jahre; i++) {
+        labels.push('Jahr ' + i);
 
-let wartenKosten = gasSumme + wpPreis
+        let kostenAlt;
+        if (i < 2) {
+          kostenAlt = aktuellProJahr;
+        } else {
+          kostenAlt = ab2027ProJahr;
+        }
 
-let jetztKosten = wpPreis + wpSumme
+        wartenSumme += kostenAlt;
+        jetztSumme += wpKostenProJahr;
 
-let diff = wartenKosten - jetztKosten
+        wartenJaehrlich.push(Math.round(kostenAlt));
+        jetztJaehrlich.push(Math.round(wpKostenProJahr));
 
-document.getElementById("ergebnis").innerHTML =
-"Warten kostet etwa: "+Math.round(diff)+" € mehr"
+        wartenKumuliert.push(Math.round(wartenSumme));
+        jetztKumuliert.push(Math.round(jetztSumme));
+      }
 
-let labels = []
+      const wartenGesamt = wartenSumme + wpPreis;
+      const jetztGesamt = wpPreis + (wpKostenProJahr * jahre);
+      const ersparnis = wartenGesamt - jetztGesamt;
 
-for(let i=1;i<=jahre;i++){
-labels.push("Jahr "+i)
-}
+      document.getElementById('heizartText').textContent = heizart;
+      document.getElementById('verbrauchText').textContent = numberDE(verbrauch) + ' kWh';
+      document.getElementById('preisJetztText').textContent = preisJetzt.toFixed(1).replace('.', ',') + ' ct/kWh';
+      document.getElementById('preis2027Text').textContent = preisAb2027.toFixed(1).replace('.', ',') + ' ct/kWh';
 
-if(chart){
-chart.destroy()
-}
+      document.getElementById('aktuellJahr').textContent = euro(aktuellProJahr);
+      document.getElementById('ab2027Jahr').textContent = euro(ab2027ProJahr);
+      document.getElementById('mehrkostenText').textContent = euro(mehrkostenProJahr);
+      document.getElementById('monat2027Text').textContent = euro(ab2027ProJahr / 12);
 
-chart = new Chart(document.getElementById("chart"),{
+      document.getElementById('wartenGesamt').textContent = euro(wartenGesamt);
+      document.getElementById('weiterheizenText').textContent = euro(wartenSumme);
+      document.getElementById('wpDanachText').textContent = euro(wpPreis);
 
-type:'line',
+      document.getElementById('jetztGesamt').textContent = euro(jetztGesamt);
+      document.getElementById('wpSofortText').textContent = euro(wpPreis);
+      document.getElementById('stromGesamtText').textContent = euro(wpKostenProJahr * jahre);
 
-data:{
-labels:labels,
-datasets:[
+      document.getElementById('ersparnisText').textContent = euro(ersparnis);
 
-{
-label:'Kosten wenn man wartet',
-data:gasKosten,
-borderColor:'red',
-fill:false
-},
+      const tbody = document.getElementById('tabelleBody');
+      tbody.innerHTML = '';
 
-{
-label:'Kosten mit Wärmepumpe jetzt',
-data:wpKosten,
-borderColor:'green',
-fill:false
-}
+      let kumWarten = 0;
+      let kumJetzt = wpPreis;
 
-]
-}
+      for (let i = 1; i <= jahre; i++) {
+        const altKosten = i < 2 ? aktuellProJahr : ab2027ProJahr;
+        kumWarten += altKosten;
+        kumJetzt += wpKostenProJahr;
 
-})
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>Jahr ${i}</td>
+          <td>${euro(altKosten)}</td>
+          <td>${euro(kumWarten)}</td>
+          <td>${euro(wpKostenProJahr)}</td>
+          <td>${euro(kumJetzt)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
 
-}
+      const ctx = document.getElementById('vergleichChart').getContext('2d');
 
-</script>
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
 
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Weiter mit alter Heizung',
+              data: wartenJaehrlich
+            },
+            {
+              label: 'Wärmepumpe jetzt',
+              data: jetztJaehrlich
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + euro(context.parsed.y);
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString('de-DE') + ' €';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function resetForm() {
+      document.getElementById('heizart').value = 'Gas';
+      document.getElementById('verbrauch').value = 20000;
+      document.getElementById('preisJetzt').value = 11.5;
+      document.getElementById('preisAb2027').value = 14.5;
+      document.getElementById('strompreis').value = 28;
+      document.getElementById('jaz').value = 3.5;
+      document.getElementById('jahre').value = 5;
+      document.getElementById('wpPreis').value = 18000;
+
+      document.getElementById('aktuellJahr').textContent = '0 €';
+      document.getElementById('ab2027Jahr').textContent = '0 €';
+      document.getElementById('mehrkostenText').textContent = '0 €';
+      document.getElementById('monat2027Text').textContent = '0 €';
+      document.getElementById('wartenGesamt').textContent = '0 €';
+      document.getElementById('weiterheizenText').textContent = '0 €';
+      document.getElementById('wpDanachText').textContent = '0 €';
+      document.getElementById('jetztGesamt').textContent = '0 €';
+      document.getElementById('wpSofortText').textContent = '0 €';
+      document.getElementById('stromGesamtText').textContent = '0 €';
+      document.getElementById('ersparnisText').textContent = '0 €';
+      document.getElementById('heizartText').textContent = '-';
+      document.getElementById('verbrauchText').textContent = '0 kWh';
+      document.getElementById('preisJetztText').textContent = '0 ct/kWh';
+      document.getElementById('preis2027Text').textContent = '0 ct/kWh';
+      document.getElementById('tabelleBody').innerHTML = '';
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+    }
+
+    berechnen();
+  </script>
 </body>
 </html>
