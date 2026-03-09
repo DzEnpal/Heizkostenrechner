@@ -1,202 +1,191 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kostenrechner Wärmepumpe vs Gas/Öl</title>
-    <!-- Chart.js CDN for bar charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #0072BB;
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input,
-        select {
-            width: 200px;
-            padding: 5px;
-            margin-top: 5px;
-        }
-        button {
-            margin-top: 15px;
-            padding: 8px 16px;
-            font-size: 14px;
-            background-color: #0072BB;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #005f99;
-        }
-        .result {
-            margin-top: 20px;
-        }
-        #chartContainer {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 30px;
-        }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Heizkosten Vergleich</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f3f4f6;
+padding:30px;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+margin-bottom:20px;
+}
+
+h1{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:10px 0;
+font-size:16px;
+}
+
+button{
+background:#16a34a;
+color:white;
+border:none;
+padding:12px 20px;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.result{
+font-size:24px;
+font-weight:bold;
+margin-top:20px;
+text-align:center;
+}
+
+</style>
+
 </head>
+
 <body>
-    <h1>Kostenrechner Wärmepumpe vs Gas/Öl</h1>
-    <div id="inputs">
-        <label for="heatingType">Heizungsart</label>
-        <select id="heatingType">
-            <option value="Gas">Gas</option>
-            <option value="Oel">Öl</option>
-        </select>
 
-        <label for="consumption">Verbrauch</label>
-        <input type="number" id="consumption" value="20000" min="0" step="1" />
-        <span id="consumptionUnit">(kWh/Jahr)</span>
+<div class="container">
 
-        <label for="unitPrice">Preis pro Einheit</label>
-        <input type="number" id="unitPrice" value="0.12" min="0" step="0.01" />
-        <span id="unitPriceUnit">(€/kWh oder €/L)</span>
+<h1>Heizkosten Vergleich</h1>
 
-        <label for="electricityPrice">Strompreis (€/kWh)</label>
-        <input type="number" id="electricityPrice" value="0.30" min="0" step="0.01" />
+<div class="card">
 
-        <label for="cop">COP der Wärmepumpe</label>
-        <input type="number" id="cop" value="4" min="0" step="0.1" />
+<h2>Eingaben</h2>
 
-        <label for="co2PriceCurrent">CO₂ Preis aktuell (€/t)</label>
-        <input type="number" id="co2PriceCurrent" value="45" min="0" step="1" />
+Wohnfläche (m²)
+<input id="flaeche" type="number" value="140">
 
-        <label for="co2PriceFuture">CO₂ Preis ab 2027 (€/t)</label>
-        <input type="number" id="co2PriceFuture" value="300" min="0" step="1" />
-    </div>
-    <button id="calculateButton">Berechnen</button>
+Gaspreis (Cent / kWh)
+<input id="gaspreis" type="number" value="12">
 
-    <div id="results" class="result"></div>
+Strompreis Wärmepumpe (Cent / kWh)
+<input id="strompreis" type="number" value="30">
 
-    <div id="chartContainer">
-        <canvas id="costChart"></canvas>
-    </div>
+Jahre bis Heizung kaputt
+<input id="jahre" type="number" value="5">
 
-    <script>
-        // Konstanten für Berechnungen
-        const energyContentOil = 10;       // kWh pro Liter Heizöl
-        const emissionFactorGas = 0.202;   // kg CO₂ pro kWh Gas
-        const emissionFactorOil = 2.68;    // kg CO₂ pro Liter Heizöl
+Preis Wärmepumpe (€)
+<input id="waermepumpepreis" type="number" value="18000">
 
-        // Aktuelle Chart-Instanz
-        let costChart = null;
+<br><br>
 
-        // Aktualisiere Einheit je nach Heizungsart
-        function updateConsumptionUnit() {
-            const type = document.getElementById('heatingType').value;
-            const unitSpan = document.getElementById('consumptionUnit');
-            const unitPriceUnitSpan = document.getElementById('unitPriceUnit');
-            if (type === 'Gas') {
-                unitSpan.textContent = '(kWh/Jahr)';
-                unitPriceUnitSpan.textContent = '(€/kWh)';
-            } else {
-                unitSpan.textContent = '(Liter/Jahr)';
-                unitPriceUnitSpan.textContent = '(€/L)';
-            }
-        }
+<button onclick="rechnen()">Berechnen</button>
 
-        // Führe die Berechnungen aus und aktualisiere Ergebnisse
-        function calculate() {
-            const type = document.getElementById('heatingType').value;
-            const consumption = parseFloat(document.getElementById('consumption').value) || 0;
-            const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
-            const electricityPrice = parseFloat(document.getElementById('electricityPrice').value) || 0;
-            const cop = parseFloat(document.getElementById('cop').value) || 0;
-            const co2Current = parseFloat(document.getElementById('co2PriceCurrent').value) || 0;
-            const co2Future = parseFloat(document.getElementById('co2PriceFuture').value) || 0;
+</div>
 
-            // Berechnungen
-            const energyDelivered = (type === 'Gas') ? consumption : consumption * energyContentOil;
-            const heatCost = consumption * unitPrice;
-            const emissionsTon = (type === 'Gas' ? emissionFactorGas * consumption : emissionFactorOil * consumption) / 1000;
-            const co2CostCurrent = emissionsTon * co2Current;
-            const co2CostFuture = emissionsTon * co2Future;
-            const totalCostNow = heatCost + co2CostCurrent;
-            const totalCostFuture = heatCost + co2CostFuture;
-            const electricityUse = cop > 0 ? energyDelivered / cop : 0;
-            const heatPumpCost = electricityUse * electricityPrice;
-            const savingsNow = totalCostNow - heatPumpCost;
-            const savingsFuture = totalCostFuture - heatPumpCost;
+<div class="card">
 
-            // Ergebnisse im HTML anzeigen
-            let resultsHTML = '';
-            resultsHTML += `<p><strong>Heizkosten heute:</strong> ${heatCost.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>CO₂-Emissionen:</strong> ${emissionsTon.toFixed(2)} t</p>`;
-            resultsHTML += `<p><strong>CO₂-Kosten aktuell:</strong> ${co2CostCurrent.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>Gesamtkosten heute:</strong> ${totalCostNow.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>Gesamtkosten ab 2027:</strong> ${totalCostFuture.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>Kosten Wärmepumpe:</strong> ${heatPumpCost.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>Ersparnis heute:</strong> ${savingsNow.toFixed(2)} €</p>`;
-            resultsHTML += `<p><strong>Ersparnis ab 2027:</strong> ${savingsFuture.toFixed(2)} €</p>`;
-            document.getElementById('results').innerHTML = resultsHTML;
+<canvas id="chart"></canvas>
 
-            // Diagramm aktualisieren
-            updateChart(totalCostNow, totalCostFuture, heatPumpCost);
-        }
+<div class="result" id="ergebnis"></div>
 
-        // Aktualisiere oder erstelle das Chart
-        function updateChart(costNow, costFuture, heatPumpCost) {
-            const ctx = document.getElementById('costChart').getContext('2d');
-            const dataValues = [costNow, costFuture, heatPumpCost];
-            if (costChart) {
-                costChart.data.datasets[0].data = dataValues;
-                costChart.update();
-            } else {
-                costChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Gesamtkosten heute', 'Gesamtkosten ab 2027', 'Wärmepumpe'],
-                        datasets: [{
-                            label: 'Jährliche Kosten (€)',
-                            data: dataValues,
-                            backgroundColor: [
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 99, 132, 0.7)',
-                                'rgba(75, 192, 192, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(75, 192, 192, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-        }
+</div>
 
-        // Event-Listener
-        document.getElementById('heatingType').addEventListener('change', function () {
-            updateConsumptionUnit();
-            calculate();
-        });
-        document.getElementById('calculateButton').addEventListener('click', calculate);
+</div>
 
-        // Initialisierung
-        updateConsumptionUnit();
-        calculate();
-    </script>
+<script>
+
+let chart;
+
+function rechnen(){
+
+let flaeche = Number(document.getElementById("flaeche").value)
+let gaspreis = Number(document.getElementById("gaspreis").value)
+let strompreis = Number(document.getElementById("strompreis").value)
+let jahre = Number(document.getElementById("jahre").value)
+let wpPreis = Number(document.getElementById("waermepumpepreis").value)
+
+let verbrauch = flaeche * 140
+
+let gasKosten = []
+let wpKosten = []
+
+let gasSumme = 0
+let wpSumme = 0
+
+for(let i=1;i<=jahre;i++){
+
+let gasJahr = (verbrauch * gaspreis /100) * (1 + i*0.05)
+
+gasSumme += gasJahr
+gasKosten.push(Math.round(gasSumme))
+
+let wpJahr = (verbrauch/3.5 * strompreis)/100
+
+wpSumme += wpJahr
+wpKosten.push(Math.round(wpSumme))
+
+}
+
+let wartenKosten = gasSumme + wpPreis
+
+let jetztKosten = wpPreis + wpSumme
+
+let diff = wartenKosten - jetztKosten
+
+document.getElementById("ergebnis").innerHTML =
+"Warten kostet etwa: "+Math.round(diff)+" € mehr"
+
+let labels = []
+
+for(let i=1;i<=jahre;i++){
+labels.push("Jahr "+i)
+}
+
+if(chart){
+chart.destroy()
+}
+
+chart = new Chart(document.getElementById("chart"),{
+
+type:'line',
+
+data:{
+labels:labels,
+datasets:[
+
+{
+label:'Kosten wenn man wartet',
+data:gasKosten,
+borderColor:'red',
+fill:false
+},
+
+{
+label:'Kosten mit Wärmepumpe jetzt',
+data:wpKosten,
+borderColor:'green',
+fill:false
+}
+
+]
+}
+
+})
+
+}
+
+</script>
+
 </body>
 </html>
