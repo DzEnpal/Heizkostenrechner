@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heizkostenvergleich – Jetzt umsteigen oder warten?</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PYUR Tarifvergleich – Ist-Zustand / Wechsel</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,235 +12,238 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f3f6fb;
-      color: #1f2937;
+      background: linear-gradient(135deg, #0b1930, #14294e);
+      color: #fff;
     }
 
     .container {
-      max-width: 1240px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 24px;
     }
 
     .hero {
-      background: linear-gradient(135deg, #0f172a, #2563eb);
-      color: white;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 20px;
       padding: 28px;
-      margin-bottom: 22px;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.12);
+      margin-bottom: 24px;
     }
 
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: 32px;
+    .badge {
+      display: inline-block;
+      background: #ff7a00;
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      padding: 8px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
     }
 
-    .hero p {
-      margin: 0;
-      opacity: 0.95;
-      font-size: 16px;
+    h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: #d8e4ff;
+      font-size: 17px;
+      max-width: 900px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: 1fr 1.25fr;
+      grid-template-columns: 1fr 1fr;
       gap: 22px;
-      align-items: start;
+      margin-bottom: 24px;
     }
 
     .card {
-      background: white;
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+      background: #fff;
+      color: #14294e;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
     }
 
     .card h2 {
       margin-top: 0;
       margin-bottom: 18px;
-      font-size: 22px;
+      font-size: 26px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6a7892;
+      margin-bottom: 10px;
     }
 
     .field {
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .field label {
       display: block;
-      font-weight: 700;
-      margin-bottom: 6px;
-      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-size: 15px;
     }
 
     .field input,
     .field select {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 10px;
+      padding: 14px 14px;
+      border-radius: 12px;
+      border: 2px solid #dce3ee;
       font-size: 15px;
-      background: white;
+      outline: none;
     }
 
-    .help {
-      margin-top: 5px;
-      font-size: 12px;
-      color: #6b7280;
+    .field input:focus,
+    .field select:focus {
+      border-color: #ff7a00;
     }
 
-    .readonly {
-      background: #f8fafc !important;
-      color: #374151;
-    }
-
-    .btns {
+    .checkbox-row {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    button {
-      border: none;
-      border-radius: 10px;
-      padding: 12px 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .primary {
-      background: #16a34a;
-      color: white;
-    }
-
-    .secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
       margin-bottom: 16px;
+      color: #243552;
+      font-weight: bold;
     }
 
-    .summary-box {
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid #e5e7eb;
-      background: #f8fafc;
+    .checkbox-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
     }
 
-    .summary-box h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
 
-    .big {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 8px;
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 10px;
     }
 
-    .line {
-      font-size: 14px;
-      margin: 6px 0;
+    .result-box {
+      background: #f4f7fc;
+      border: 1px solid #e3eaf4;
+      border-radius: 18px;
+      padding: 20px;
     }
 
-    .highlight {
-      border-radius: 16px;
-      padding: 18px;
-      margin-top: 16px;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-    }
-
-    .highlight .title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .highlight .value {
-      font-size: 34px;
-      font-weight: 900;
-      color: #166534;
-    }
-
-    .chart-card {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 16px;
-      border: 1px solid #e5e7eb;
-      background: #fff;
-    }
-
-    .chart-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .table-wrap {
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      background: white;
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    th, td {
-      padding: 12px 10px;
-      border-bottom: 1px solid #e5e7eb;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    th {
-      background: #eff6ff;
-      color: #1e3a8a;
-      font-weight: 700;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .note {
-      margin-top: 16px;
+    .result-title {
       font-size: 13px;
-      color: #6b7280;
-      line-height: 1.5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #687791;
+      margin-bottom: 10px;
+      font-weight: bold;
     }
 
-    .small-badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      background: #eff6ff;
-      color: #1d4ed8;
+    .result-value {
+      font-size: 30px;
+      font-weight: bold;
+      color: #14294e;
+      line-height: 1.1;
+    }
+
+    .result-sub {
+      margin-top: 8px;
+      color: #5d6c87;
+      font-size: 14px;
+    }
+
+    .tarif-details {
+      margin-top: 18px;
+      background: #f8fbff;
+      border: 1px solid #e3ecf8;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .tarif-name {
+      font-size: 24px;
+      font-weight: bold;
       margin-bottom: 10px;
+      color: #14294e;
+    }
+
+    .tarif-meta {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .meta-box {
+      background: #fff;
+      border: 1px solid #e3eaf4;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .meta-label {
+      font-size: 12px;
+      color: #6e7c96;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #14294e;
+    }
+
+    .bottom-note {
+      margin-top: 24px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 18px;
+      color: #d9e5ff;
+    }
+
+    .green {
+      color: #118a43 !important;
+    }
+
+    .red {
+      color: #c33a2c !important;
+    }
+
+    .orange {
+      color: #d06b00 !important;
     }
 
     @media (max-width: 950px) {
       .grid,
-      .summary-grid {
+      .result-grid,
+      .tarif-meta,
+      .mini-grid {
         grid-template-columns: 1fr;
       }
 
-      .hero h1 {
-        font-size: 26px;
+      h1 {
+        font-size: 28px;
+      }
+
+      .result-value {
+        font-size: 25px;
       }
     }
   </style>
@@ -249,373 +251,303 @@
 <body>
   <div class="container">
     <div class="hero">
-      <h1>Jetzt umsteigen oder warten?</h1>
-      <p>Vergleich: alte Heizung weiter nutzen oder jetzt direkt auf Wärmepumpe umsteigen.</p>
+      <div class="badge">Tarifvergleich / Bestandskunde / Wechselberatung</div>
+      <h1>Aktuelle Kosten mit neuem PYUR Tarif vergleichen</h1>
+      <div class="subtitle">
+        Trage einfach die aktuellen Kundendaten ein, wähle danach den passenden PYUR-Tarif aus und die monatlichen Kosten werden direkt gegenübergestellt.
+      </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>Eingaben</h2>
+        <h2>Ist-Zustand beim Kunden</h2>
 
         <div class="field">
-          <label for="heizart">Aktuelle Heizart</label>
-          <select id="heizart" onchange="berechnen()">
-            <option value="Gas">Gas</option>
-            <option value="Öl">Öl</option>
-          </select>
+          <label for="anbieter">Aktueller Anbieter</label>
+          <input type="text" id="anbieter" placeholder="z. B. Telekom, Vodafone, o2, 1&1" oninput="berechnen()">
         </div>
 
-        <div class="field">
-          <label for="verbrauch">Aktueller Jahresverbrauch (kWh/Jahr)</label>
-          <input id="verbrauch" type="number" value="20000" oninput="berechnen()">
-          <div class="help">Beispiel: 20.000 kWh pro Jahr</div>
+        <div class="mini-grid">
+          <div class="field">
+            <label for="internetPreis">Aktueller Internetpreis (€ / Monat)</label>
+            <input type="number" id="internetPreis" placeholder="z. B. 39.99" step="0.01" oninput="berechnen()">
+          </div>
+
+          <div class="field">
+            <label for="sonstigePreis">Sonstige Kosten (€ / Monat)</label>
+            <input type="number" id="sonstigePreis" placeholder="z. B. 0.00" step="0.01" oninput="berechnen()">
+          </div>
         </div>
 
-        <div class="field">
-          <label for="preisJetzt">Aktueller Preis (Cent pro kWh)</label>
-          <input id="preisJetzt" type="number" step="0.1" value="11" oninput="berechnen()">
-          <div class="help">Das zahlt der Kunde aktuell.</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="tvVorhanden" onchange="toggleTvFeld(); berechnen();">
+          <label for="tvVorhanden" style="margin:0;">TV läuft aktuell noch über uns / soll berücksichtigt werden</label>
         </div>
 
-        <div class="field">
-          <label for="co2Heute">CO₂-Preis heute (€/t)</label>
-          <input id="co2Heute" type="number" step="1" value="60" oninput="berechnen()">
-        </div>
-
-        <div class="field">
-          <label for="co2Zukunft">CO₂-Preis ab Zieljahr (€/t)</label>
-          <input id="co2Zukunft" type="number" step="1" value="300" oninput="berechnen()">
-          <div class="help">Hier kannst du z. B. auch 150, 180, 240 oder 300 eintragen.</div>
+        <div class="field" id="tvPreisWrap" style="display:none;">
+          <label for="tvPreis">TV-Preis aktuell (€ / Monat)</label>
+          <input type="number" id="tvPreis" placeholder="z. B. 10.00" step="0.01" oninput="berechnen()">
         </div>
 
         <div class="field">
-          <label for="startJahr">Startjahr</label>
-          <input id="startJahr" type="number" value="2026" oninput="berechnen()">
-        </div>
-
-        <div class="field">
-          <label for="preisAb2027">Preis ab Zieljahr (Cent pro kWh)</label>
-          <input id="preisAb2027" type="text" class="readonly" readonly>
-          <div class="help">Wird automatisch aus aktuellem Preis + CO₂-Aufschlag berechnet.</div>
-        </div>
-
-        <div class="field">
-          <label for="strompreis">Wärmepumpen-Strompreis (Cent pro kWh)</label>
-          <input id="strompreis" type="number" step="0.1" value="28" oninput="berechnen()">
-        </div>
-
-        <div class="field">
-          <label for="jaz">JAZ Wärmepumpe</label>
-          <input id="jaz" type="number" step="0.1" value="3.7" oninput="berechnen()">
-          <div class="help">Je höher die JAZ, desto effizienter die Wärmepumpe.</div>
-        </div>
-
-        <div class="field">
-          <label for="jahre">Jahre bis die alte Heizung ersetzt werden muss</label>
-          <input id="jahre" type="number" value="7" oninput="berechnen()">
-        </div>
-
-        <div class="field">
-          <label for="wpPreis">Kosten Wärmepumpe (€)</label>
-          <input id="wpPreis" type="number" value="23000" oninput="berechnen()">
-        </div>
-
-        <div class="btns">
-          <button class="primary" onclick="berechnen()">Jetzt berechnen</button>
-          <button class="secondary" onclick="resetForm()">Zurücksetzen</button>
-        </div>
-
-        <div class="note">
-          Standardannahme: heute 60 €/t CO₂. Für skeptische Kunden kannst du den Zielwert frei anpassen.
+          <label for="notiz">Notiz / aktueller Tarif beim Kunden</label>
+          <input type="text" id="notiz" placeholder="z. B. 50er Leitung, alter Vertrag, inkl. TV" oninput="berechnen()">
         </div>
       </div>
 
       <div class="card">
-        <h2>Ergebnis</h2>
+        <h2>Neuen PYUR Tarif auswählen</h2>
 
-        <div class="summary-grid">
-          <div class="summary-box">
-            <div class="small-badge">Heute</div>
-            <h3>Aktuelle Kosten mit alter Heizung</h3>
-            <div class="big" id="aktuellJahr">0 €</div>
-            <div class="line">Monatlich: <strong id="aktuellMonat">0 €</strong></div>
-            <div class="line">Heizart: <strong id="heizartText">-</strong></div>
-            <div class="line">Verbrauch: <strong id="verbrauchText">0 kWh</strong></div>
-            <div class="line">Preis aktuell: <strong id="preisJetztText">0 ct/kWh</strong></div>
-          </div>
-
-          <div class="summary-box">
-            <div class="small-badge">Ab Zieljahr</div>
-            <h3>Künftige Kosten mit alter Heizung</h3>
-            <div class="big" id="ab2027Jahr">0 €</div>
-            <div class="line">Monatlich: <strong id="ab2027Monat">0 €</strong></div>
-            <div class="line">Preis ab Zieljahr: <strong id="preis2027Text">0 ct/kWh</strong></div>
-            <div class="line">Mehrkosten pro Jahr: <strong id="mehrkostenText">0 €</strong></div>
-          </div>
-
-          <div class="summary-box">
-            <div class="small-badge">Wärmepumpe</div>
-            <h3>Verbrauch und laufende Kosten</h3>
-            <div class="big" id="wpJahr">0 €</div>
-            <div class="line">Monatlich: <strong id="wpMonatText">0 €</strong></div>
-            <div class="line">Stromverbrauch pro Jahr: <strong id="wpStromverbrauchText">0 kWh</strong></div>
-            <div class="line">JAZ: <strong id="jazText">0</strong></div>
-          </div>
-
-          <div class="summary-box">
-            <div class="small-badge">Vergleich</div>
-            <h3>Gesamtkosten im gewählten Zeitraum</h3>
-            <div class="line">Wenn Sie warten: <strong id="wartenGesamt">0 €</strong></div>
-            <div class="line">Wenn Sie sofort umsteigen: <strong id="jetztGesamt">0 €</strong></div>
-            <div class="line">Alte Heizung bis Ersatz: <strong id="weiterheizenText">0 €</strong></div>
-            <div class="line">Wärmepumpe sofort: <strong id="wpSofortText">0 €</strong></div>
-          </div>
+        <div class="field">
+          <label for="tarifSelect">PYUR Tarif</label>
+          <select id="tarifSelect" onchange="berechnen()">
+            <option value="wechsel20">Wechsel 20</option>
+            <option value="wechsel50">Wechsel 50</option>
+            <option value="wechsel100">Wechsel 100</option>
+            <option value="wechsel250">Wechsel 250</option>
+            <option value="wechsel500">Wechsel 500</option>
+            <option value="wechsel1000">Wechsel 1000</option>
+            <option value="pure20">Pure 20</option>
+            <option value="pure50">Pure 50</option>
+            <option value="pure250">Pure 250</option>
+            <option value="pure500">Pure 500</option>
+            <option value="pure1000">Pure 1000</option>
+          </select>
         </div>
 
-        <div class="highlight">
-          <div class="title">Vorteil beim sofortigen Umstieg über den gewählten Zeitraum</div>
-          <div class="value" id="ersparnisText">0 €</div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="tvNeuMitnehmen" onchange="berechnen()">
+          <label for="tvNeuMitnehmen" style="margin:0;">TV im neuen Angebot mit einrechnen</label>
         </div>
 
-        <div class="chart-card">
-          <div class="chart-title">Jährliche Heizkosten im Vergleich</div>
-          <canvas id="vergleichChart" height="120"></canvas>
+        <div class="field" id="tvNeuWrap">
+          <label for="tvNeuPreis">TV neu (€ / Monat)</label>
+          <input type="number" id="tvNeuPreis" placeholder="z. B. 10.00" step="0.01" oninput="berechnen()">
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Jahr</th>
-                <th>Kosten alte Heizung im Jahr</th>
-                <th>Bisher bezahlt beim Warten</th>
-                <th>Kosten Wärmepumpe im Jahr</th>
-                <th>Bisher bezahlt beim Sofort-Umstieg</th>
-              </tr>
-            </thead>
-            <tbody id="tabelleBody"></tbody>
-          </table>
-        </div>
+        <div class="tarif-details">
+          <div class="section-label">Ausgewähltes Produkt</div>
+          <div class="tarif-name" id="tarifName">Wechsel 20</div>
 
-        <div class="note">
-          Die Tabelle zeigt Jahr für Jahr, wie sich die Kosten entwickeln. Beim Sofort-Umstieg ist die Investition direkt am Anfang enthalten.
+          <div id="tarifBeschreibung" style="color:#42526f; margin-bottom: 12px;">
+            Tarifdetails erscheinen hier automatisch.
+          </div>
+
+          <div class="tarif-meta">
+            <div class="meta-box">
+              <div class="meta-label">Monatspreis</div>
+              <div class="meta-value" id="tarifPreisAnzeige">0,00 €</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">Download</div>
+              <div class="meta-value" id="tarifDownload">-</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">Upload</div>
+              <div class="meta-value" id="tarifUpload">-</div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">Tarifart</div>
+              <div class="meta-value" id="tarifArt">-</div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>Monatlicher Vergleich</h2>
+
+      <div class="result-grid">
+        <div class="result-box">
+          <div class="result-title">Aktuell</div>
+          <div class="result-value" id="aktuellGesamt">0,00 €</div>
+          <div class="result-sub" id="aktuellInfo">Aktuelle monatliche Gesamtkosten</div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-title">Neu bei PYUR</div>
+          <div class="result-value" id="neuGesamt">0,00 €</div>
+          <div class="result-sub" id="neuInfo">Neuer monatlicher Gesamtpreis</div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-title">Differenz</div>
+          <div class="result-value orange" id="differenz">0,00 €</div>
+          <div class="result-sub" id="differenzInfo">Vergleich zwischen alt und neu</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-note">
+      <strong>Hinweis:</strong> Preise, Verfügbarkeiten und Tarifbezeichnungen kannst du unten im Code jederzeit anpassen. Dadurch kannst du die Seite schnell für deine echten PYUR-Produkte und Wechseltarife abändern.
     </div>
   </div>
 
   <script>
-    let chartInstance;
-
-    function euro(value) {
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR',
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function numberDE(value) {
-      return new Intl.NumberFormat('de-DE', {
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function berechnePreisAbZieljahr(preisJetzt, heizart, co2Heute, co2Zukunft) {
-      const co2Differenz = co2Zukunft - co2Heute;
-
-      let co2KgProKwh = 0;
-      if (heizart === 'Gas') {
-        co2KgProKwh = 0.201;
-      } else {
-        co2KgProKwh = 0.266;
+    const tarife = {
+      wechsel20: {
+        name: "Wechsel 20",
+        preis: 24.99,
+        download: "20 Mbit/s",
+        upload: "5 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Einfacher Wechseltarif für grundlegende Internetnutzung."
+      },
+      wechsel50: {
+        name: "Wechsel 50",
+        preis: 29.99,
+        download: "50 Mbit/s",
+        upload: "10 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Geeignet für Alltag, Streaming und mehrere Geräte."
+      },
+      wechsel100: {
+        name: "Wechsel 100",
+        preis: 32.99,
+        download: "100 Mbit/s",
+        upload: "20 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Gute Lösung für stärkere Nutzung im Alltag."
+      },
+      wechsel250: {
+        name: "Wechsel 250",
+        preis: 34.99,
+        download: "250 Mbit/s",
+        upload: "25 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Starker Tarif für Familien, Homeoffice und Streaming."
+      },
+      wechsel500: {
+        name: "Wechsel 500",
+        preis: 39.99,
+        download: "500 Mbit/s",
+        upload: "50 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Für hohe Anforderungen, viele Geräte und schnelle Downloads."
+      },
+      wechsel1000: {
+        name: "Wechsel 1000",
+        preis: 49.99,
+        download: "1000 Mbit/s",
+        upload: "100 Mbit/s",
+        art: "Wechseltarif",
+        beschreibung: "Maximale Geschwindigkeit für anspruchsvolle Nutzung."
+      },
+      pure20: {
+        name: "Pure 20",
+        preis: 22.99,
+        download: "20 Mbit/s",
+        upload: "5 Mbit/s",
+        art: "Pure Tarif",
+        beschreibung: "Basis-Pure-Tarif für leichte Nutzung."
+      },
+      pure50: {
+        name: "Pure 50",
+        preis: 27.99,
+        download: "50 Mbit/s",
+        upload: "10 Mbit/s",
+        art: "Pure Tarif",
+        beschreibung: "Solider Tarif für klassische Internetnutzung."
+      },
+      pure250: {
+        name: "Pure 250",
+        preis: 32.99,
+        download: "250 Mbit/s",
+        upload: "25 Mbit/s",
+        art: "Pure Tarif",
+        beschreibung: "Schneller Tarif für moderne Haushalte."
+      },
+      pure500: {
+        name: "Pure 500",
+        preis: 37.99,
+        download: "500 Mbit/s",
+        upload: "50 Mbit/s",
+        art: "Pure Tarif",
+        beschreibung: "Highspeed-Tarif für starke Nutzung."
+      },
+      pure1000: {
+        name: "Pure 1000",
+        preis: 47.99,
+        download: "1000 Mbit/s",
+        upload: "100 Mbit/s",
+        art: "Pure Tarif",
+        beschreibung: "Top-Geschwindigkeit für höchste Ansprüche."
       }
+    };
 
-      const aufpreisEuroProKwh = co2KgProKwh * (co2Differenz / 1000);
-      const aufpreisCentProKwh = aufpreisEuroProKwh * 100;
-
-      return preisJetzt + aufpreisCentProKwh;
-    }
-
-    function berechnen() {
-      const heizart = document.getElementById('heizart').value;
-      const verbrauch = Number(document.getElementById('verbrauch').value);
-      const preisJetzt = Number(document.getElementById('preisJetzt').value);
-      const co2Heute = Number(document.getElementById('co2Heute').value);
-      const co2Zukunft = Number(document.getElementById('co2Zukunft').value);
-      const startJahr = Number(document.getElementById('startJahr').value);
-      const strompreis = Number(document.getElementById('strompreis').value);
-      const jaz = Number(document.getElementById('jaz').value);
-      const jahre = Number(document.getElementById('jahre').value);
-      const wpPreis = Number(document.getElementById('wpPreis').value);
-
-      if (!verbrauch || !preisJetzt || !strompreis || !jaz || !jahre || !wpPreis || !startJahr) {
-        return;
-      }
-
-      const preisAbZieljahr = berechnePreisAbZieljahr(preisJetzt, heizart, co2Heute, co2Zukunft);
-      document.getElementById('preisAb2027').value = preisAbZieljahr.toFixed(1).replace('.', ',');
-
-      const aktuellProJahr = verbrauch * (preisJetzt / 100);
-      const aktuellProMonat = aktuellProJahr / 12;
-
-      const zukunftProJahr = verbrauch * (preisAbZieljahr / 100);
-      const zukunftProMonat = zukunftProJahr / 12;
-
-      const mehrkostenProJahr = zukunftProJahr - aktuellProJahr;
-
-      const wpStromverbrauchProJahr = verbrauch / jaz;
-      const wpKostenProJahr = wpStromverbrauchProJahr * (strompreis / 100);
-      const wpKostenProMonat = wpKostenProJahr / 12;
-
-      document.getElementById('heizartText').textContent = heizart;
-      document.getElementById('verbrauchText').textContent = numberDE(verbrauch) + ' kWh';
-      document.getElementById('preisJetztText').textContent = preisJetzt.toFixed(1).replace('.', ',') + ' ct/kWh';
-
-      document.getElementById('aktuellJahr').textContent = euro(aktuellProJahr);
-      document.getElementById('aktuellMonat').textContent = euro(aktuellProMonat);
-
-      document.getElementById('ab2027Jahr').textContent = euro(zukunftProJahr);
-      document.getElementById('ab2027Monat').textContent = euro(zukunftProMonat);
-      document.getElementById('preis2027Text').textContent = preisAbZieljahr.toFixed(1).replace('.', ',') + ' ct/kWh';
-      document.getElementById('mehrkostenText').textContent = euro(mehrkostenProJahr);
-
-      document.getElementById('wpJahr').textContent = euro(wpKostenProJahr);
-      document.getElementById('wpMonatText').textContent = euro(wpKostenProMonat);
-      document.getElementById('wpStromverbrauchText').textContent = numberDE(wpStromverbrauchProJahr) + ' kWh';
-      document.getElementById('jazText').textContent = jaz.toFixed(1).replace('.', ',');
-
-      const tbody = document.getElementById('tabelleBody');
-      tbody.innerHTML = '';
-
-      const labels = [];
-      const alteHeizungJahrWerte = [];
-      const wpJahrWerte = [];
-
-      let kumWarten = 0;
-      let kumJetzt = wpPreis;
-
-      for (let i = 0; i < jahre; i++) {
-        const kalenderJahr = startJahr + i;
-        const altKosten = i === 0 ? aktuellProJahr : zukunftProJahr;
-
-        kumWarten += altKosten;
-        kumJetzt += wpKostenProJahr;
-
-        labels.push(String(kalenderJahr));
-        alteHeizungJahrWerte.push(Math.round(altKosten));
-        wpJahrWerte.push(Math.round(wpKostenProJahr));
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${kalenderJahr}</td>
-          <td>${euro(altKosten)}</td>
-          <td>${euro(kumWarten)}</td>
-          <td>${euro(wpKostenProJahr)}</td>
-          <td>${euro(kumJetzt)}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-
-      const wartenGesamt = kumWarten + wpPreis;
-      const jetztGesamt = wpPreis + (wpKostenProJahr * jahre);
-      const ersparnis = wartenGesamt - jetztGesamt;
-
-      document.getElementById('wartenGesamt').textContent = euro(wartenGesamt);
-      document.getElementById('jetztGesamt').textContent = euro(jetztGesamt);
-      document.getElementById('weiterheizenText').textContent = euro(kumWarten);
-      document.getElementById('wpSofortText').textContent = euro(wpPreis);
-      document.getElementById('ersparnisText').textContent = euro(ersparnis);
-
-      const ctx = document.getElementById('vergleichChart').getContext('2d');
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Alte Heizung pro Jahr',
-              data: alteHeizungJahrWerte
-            },
-            {
-              label: 'Wärmepumpe pro Jahr',
-              data: wpJahrWerte
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top'
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return context.dataset.label + ': ' + euro(context.parsed.y);
-                }
-              }
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function(value) {
-                  return value.toLocaleString('de-DE') + ' €';
-                }
-              }
-            }
-          }
-        }
+    function euro(wert) {
+      return wert.toLocaleString("de-DE", {
+        style: "currency",
+        currency: "EUR"
       });
     }
 
-    function resetForm() {
-      document.getElementById('heizart').value = 'Gas';
-      document.getElementById('verbrauch').value = 20000;
-      document.getElementById('preisJetzt').value = 11;
-      document.getElementById('co2Heute').value = 60;
-      document.getElementById('co2Zukunft').value = 300;
-      document.getElementById('startJahr').value = 2026;
-      document.getElementById('preisAb2027').value = '';
-      document.getElementById('strompreis').value = 28;
-      document.getElementById('jaz').value = 3.7;
-      document.getElementById('jahre').value = 7;
-      document.getElementById('wpPreis').value = 23000;
-
-      document.getElementById('aktuellJahr').textContent = '0 €';
-      document.getElementById('aktuellMonat').textContent = '0 €';
-      document.getElementById('ab2027Jahr').textContent = '0 €';
-      document.getElementById('ab2027Monat').textContent = '0 €';
-      document.getElementById('mehrkostenText').textContent = '0 €';
-      document.getElementById('wpJahr').textContent = '0 €';
-      document.getElementById('wpMonatText').textContent = '0 €';
-      document.getElementById('wpStromverbrauchText').textContent = '0 kWh';
-      document.getElementById('jazText').textContent = '0';
-      document.getElementById('wartenGesamt').textContent = '0 €';
-      document.getElementById('jetztGesamt').textContent = '0 €';
-      document.getElementById('weiterheizenText').textContent = '0 €';
-      document.getElementById('wpSofortText').textContent = '0 €';
-      document.getElementById('ersparnisText').textContent = '0 €';
-      document.getElementById('heizartText').textContent = '-';
-      document.getElementById('verbrauchText').textContent = '0 kWh';
-      document.getElementById('preisJetztText').textContent = '0 ct/kWh';
-      document.getElementById('preis2027Text').textContent = '0 ct/kWh';
-      document.getElementById('tabelleBody').innerHTML = '';
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      berechnen();
+    function holeZahl(id) {
+      const wert = parseFloat(document.getElementById(id).value);
+      return isNaN(wert) ? 0 : wert;
     }
 
+    function toggleTvFeld() {
+      const tvAn = document.getElementById("tvVorhanden").checked;
+      document.getElementById("tvPreisWrap").style.display = tvAn ? "block" : "none";
+    }
+
+    function berechnen() {
+      const anbieter = document.getElementById("anbieter").value || "aktueller Anbieter";
+      const tarifKey = document.getElementById("tarifSelect").value;
+      const tarif = tarife[tarifKey];
+
+      const internetPreis = holeZahl("internetPreis");
+      const sonstigePreis = holeZahl("sonstigePreis");
+
+      const tvAltAktiv = document.getElementById("tvVorhanden").checked;
+      const tvAltPreis = tvAltAktiv ? holeZahl("tvPreis") : 0;
+
+      const tvNeuAktiv = document.getElementById("tvNeuMitnehmen").checked;
+      const tvNeuPreis = tvNeuAktiv ? holeZahl("tvNeuPreis") : 0;
+
+      const aktuell = internetPreis + sonstigePreis + tvAltPreis;
+      const neu = tarif.preis + tvNeuPreis;
+      const diff = neu - aktuell;
+
+      document.getElementById("tarifName").textContent = tarif.name;
+      document.getElementById("tarifPreisAnzeige").textContent = euro(tarif.preis);
+      document.getElementById("tarifDownload").textContent = tarif.download;
+      document.getElementById("tarifUpload").textContent = tarif.upload;
+      document.getElementById("tarifArt").textContent = tarif.art;
+      document.getElementById("tarifBeschreibung").textContent = tarif.beschreibung;
+
+      document.getElementById("aktuellGesamt").textContent = euro(aktuell);
+      document.getElementById("neuGesamt").textContent = euro(neu);
+
+      document.getElementById("aktuellInfo").textContent =
+        "Aktuelle monatliche Gesamtkosten bei " + anbieter;
+
+      document.getElementById("neuInfo").textContent =
+        "Neuer monatlicher Gesamtpreis mit " + tarif.name;
+
+      const diffEl = document.getElementById("differenz");
+      const diffInfoEl = document.getElementById("differenzInfo");
+
+      diffEl.classList.remove("green", "red", "orange");
+
+      if (diff < 0) {
+        diffEl.textContent = euro(Math.abs(diff)) + " günstiger";
+        diffEl.classList.add("green");
+        diffInfoEl.textContent = "Der neue Tarif ist monatlich günstiger";
+      } else if (diff > 0) {
+        diffEl.textContent = euro(diff) + " mehr";
+        diffEl.classList.add("red");
+        diffInfoEl.textContent = "Der neue Tarif ist monatlich teurer";
+      } else {
+        diffEl.textContent = "0,00 € gleich";
+        diffEl.classList.add("orange");
+        diffInfoEl.textContent = "Beide Varianten liegen auf gleichem Niveau";
+      }
+    }
+
+    toggleTvFeld();
     berechnen();
   </script>
 </body>
